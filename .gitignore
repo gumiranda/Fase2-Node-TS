@@ -1,3 +1,4 @@
+bin/configuration/
 .env
 node_modules
 dist

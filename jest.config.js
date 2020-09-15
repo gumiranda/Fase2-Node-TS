@@ -6,6 +6,8 @@ module.exports = {
   roots: ['<rootDir>/src'],
   collectCoverageFrom: ['<rootDir>/src/**/*.ts', '!**/test/**'],
   coverageDirectory: 'coverage',
+  // coverageProvider: 'v8',
+  // coverageReporters: ['text', 'lcov'],
   preset: '@shelf/jest-mongodb',
   testEnvironment: 'node',
   transform: {
@@ -14,4 +16,5 @@ module.exports = {
   moduleNameMapper: {
     '@/(.*)': '<rootDir>/src/$1',
   },
+  // testMatch: ['**/__tests__/**/*.test.js'],
 };
