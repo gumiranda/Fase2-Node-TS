@@ -1,6 +1,6 @@
 import express from 'express';
-//import setupMiddlewares from './middlewares';
-//import setupRoutes from './routes';
+import setupMiddlewares from './middlewares';
+import setupRoutes from './routes';
 import helmet from 'helmet';
 //EXPRESS RATE LIMIT
 import rateLimit from 'express-rate-limit';
@@ -18,6 +18,6 @@ app.use(helmet());
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 //setupSwagger(app);
-//setupMiddlewares(app, io);
-//setupRoutes(app);
+setupMiddlewares(app, io);
+setupRoutes(app);
 export { app, server, io };

@@ -7,7 +7,6 @@ const connectedUsers = {};
 MongoHelper.connect(process.env.connection)
   .then(async () => {
     const { server, io } = await import('@/bin/configuration/app');
-
     let port = process.env.PORT || 3333;
     server.listen(port, () => {
       io.on('connection', async (socket) => {
