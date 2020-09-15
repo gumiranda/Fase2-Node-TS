@@ -73,7 +73,7 @@
     "faker": "^4.1.0",
     "jest": "^26.1.0",
     "mockdate": "^3.0.2",
-    "mongodb-memory-server": "^6.6.1",
+    "mongodb-memory-server": "6.6.1",
     "mongodb-memory-server-core": "^6.6.6",
     "nodemon": "^2.0.4",
     "prettier": "^2.0.5",
@@ -82,6 +82,10 @@
     "supertest": "^4.0.2",
     "ts-jest": "^26.0.0",
     "typescript": "^3.9.3"
+  },"config": {
+    "mongodbMemoryServer": {
+      "version": "6.6.1"
+    }
   },
   "engines": {
     "node": "12.x"

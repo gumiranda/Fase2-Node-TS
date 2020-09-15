@@ -6,3 +6,4 @@ data
 !src/data
 .vscode
 /src/docs/modules
+yarn.lock
