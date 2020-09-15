@@ -1,0 +1,6 @@
+{
+  "build": "docker build -t devdoido .",
+  "run": "docker run -it devdoido sh",
+  "runContainer": "docker run -p 3333:3333 devdoido",
+  "up": "docker-compose up -d"
+}
