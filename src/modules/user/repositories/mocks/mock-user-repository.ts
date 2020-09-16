@@ -1,4 +1,5 @@
 import {
+  makeFakeArrayUsers,
   mockFakeUser,
   mockFakeUserUpdated,
 } from '@/modules/user/models/mocks/mock-user';
@@ -10,6 +11,7 @@ import { LoadUserByTokenRepository } from '../protocols/load-user-by-token-repos
 import { UpdateUserRepository } from '../protocols/update-user-repository';
 import { UpdatePasswordRepository } from '../protocols/update-password-repository';
 import { LoadUserByIdRepository } from '../protocols/load-user-by-id-repository';
+import { LoadUserByPageRepository } from '../protocols/load-user-by-page-repository';
 
 export const mockAddUserRepository = (): AddUserRepository => {
   //  userModel = mockFakeUser('client');
@@ -92,4 +94,22 @@ export const mockLoadUserByIdRepository = (): LoadUserByIdRepository => {
     }
   }
   return new LoadUserByIdStub();
+};
+export const mockLoadUserByPageRepository = (): LoadUserByPageRepository => {
+  class LoadUserByPageStub implements LoadUserByPageRepository {
+    users = makeFakeArrayUsers();
+    page: number;
+    userId: string;
+    async loadByPage(page: number, userId: string): Promise<UserModel[]> {
+      this.userId = userId;
+      this.page = page;
+      return new Promise((resolve) => resolve(this.users.slice(0, 10)));
+    }
+    async countUsersByPage(page: number, userId: string): Promise<number> {
+      this.userId = userId;
+      this.page = page;
+      return new Promise((resolve) => resolve(this.users.length));
+    }
+  }
+  return new LoadUserByPageStub();
 };

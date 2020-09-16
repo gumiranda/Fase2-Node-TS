@@ -11,6 +11,8 @@ import { LoadUserByTokenRepository } from './protocols/load-user-by-token-reposi
 import { UpdateUserRepository } from './protocols/update-user-repository';
 import { UpdatePasswordRepository } from './protocols/update-password-repository';
 import { LoadUserByIdRepository } from './protocols/load-user-by-id-repository';
+import { LoadUserByPageRepository } from './protocols/load-user-by-page-repository';
+import { QueryBuilder } from '@/bin/helpers/query-builder';
 export class UserMongoRepository
   implements
     AddUserRepository,
@@ -18,7 +20,8 @@ export class UserMongoRepository
     LoadUserByEmailRepository,
     LoadUserByTokenRepository,
     UpdatePasswordRepository,
-    LoadUserByIdRepository {
+    LoadUserByIdRepository,
+    LoadUserByPageRepository {
   constructor(private readonly mongoRepository: MongoRepository) {}
   _id: string;
   userModel: UserModel;
@@ -80,5 +83,44 @@ export class UserMongoRepository
   async loadById(_id: string): Promise<UserModel> {
     const result = await this.mongoRepository.getById(_id);
     return result;
+  }
+  async countUsersByPage(page: number, userId: string): Promise<number> {
+    const userLogged = await this.mongoRepository.getById(userId);
+    const query = new QueryBuilder()
+      .geoNear({
+        near: { type: 'Point', coordinates: userLogged.coord.coordinates },
+        query: { role: 'owner', _id: { $ne: new ObjectId(userId) } },
+        distanceField: 'distance',
+        maxDistance: 100000,
+        spherical: true,
+      })
+      .count('name')
+      .build();
+    const usersCount: any = await this.mongoRepository.aggregate(query);
+    if (usersCount.length === 0) {
+      return 0;
+    }
+    return await usersCount[0]?.name;
+  }
+  async loadByPage(
+    page: number,
+    userId: string,
+  ): Promise<Omit<UserModel, 'password'>[]> {
+    const userLogged = await this.mongoRepository.getById(userId);
+    const query = new QueryBuilder()
+      .geoNear({
+        near: { type: 'Point', coordinates: userLogged.coord.coordinates },
+        query: { role: 'owner', _id: { $ne: new ObjectId(userId) } },
+        distanceField: 'distance',
+        maxDistance: 100000,
+        spherical: true,
+      })
+      .sort({ distance: 1 })
+      .skip((page - 1) * 10)
+      .limit(10)
+      .project({ password: 0 })
+      .build();
+    const users = await this.mongoRepository.aggregate(query);
+    return users;
   }
 }

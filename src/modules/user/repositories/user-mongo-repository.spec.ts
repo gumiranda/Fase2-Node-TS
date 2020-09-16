@@ -1,7 +1,10 @@
 import { UserMongoRepository } from './user-mongo-repository';
 import { MongoHelper } from '@/bin/helpers/db/mongo/mongo-helper';
 import { Collection, ObjectId } from 'mongodb';
-import { mockFakeUserData } from '@/modules/user/models/mocks/mock-user';
+import {
+  makeFakeArrayUsers,
+  mockFakeUserData,
+} from '@/modules/user/models/mocks/mock-user';
 import { MongoRepository } from '@/bin/repository/mongo-repository';
 import MockDate from 'mockdate';
 import variables from '@/bin/configuration/variables';
@@ -123,5 +126,39 @@ describe('User Mongo Repository', () => {
     expect(userLoaded).toBeTruthy();
     expect(userLoaded._id).toBeTruthy();
     expect(userLoaded._id).toEqual(user._id);
+  });
+  test('Should return an user loadByPage success', async () => {
+    const sut = makeSut();
+    let arrayUsers = makeFakeArrayUsers();
+    arrayUsers.forEach((acc) => {
+      delete acc._id;
+      acc.role = 'owner';
+    });
+    await userCollection.insertMany(arrayUsers);
+    await userCollection.createIndex({ coord: '2dsphere' });
+    const userAdded = await makeUser();
+    const users = await sut.loadByPage(1, userAdded._id);
+    expect(users).toBeTruthy();
+    expect(users[0]).toBeTruthy();
+    expect(users[1]).toBeTruthy();
+    expect(users.length).toBe(10);
+  });
+  test('Should return an user countUsersByPage success', async () => {
+    const sut = makeSut();
+    let arrayUsers = makeFakeArrayUsers();
+    arrayUsers.forEach((acc) => {
+      delete acc._id;
+      acc.role = 'owner';
+    });
+    await userCollection.insertMany(arrayUsers);
+    const userAdded = await makeUser();
+    const usersCounts = await sut.countUsersByPage(1, userAdded._id);
+    expect(usersCounts).toBe(15);
+  });
+  test('Should return 0 on countUsersByPage success', async () => {
+    const sut = makeSut();
+    const userAdded = await makeUser();
+    const usersCounts = await sut.countUsersByPage(1, userAdded._id);
+    expect(usersCounts).toBe(0);
   });
 });
