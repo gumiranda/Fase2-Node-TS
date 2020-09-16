@@ -1,10 +1,12 @@
 import {
   mockFakeUser,
+  mockFakeUserPassword,
   mockFakeUserUpdated,
 } from '../../models/mocks/mock-user';
 import { UserData, UserModel } from '../../models/user-model';
 import { AddUser, AddUserModel } from '../add-user/add-user';
 import { LoadUserByToken } from '../load-user-by-token/load-user-by-token';
+import { UpdatePassword } from '../update-password/update-password';
 import { UpdateUser } from '../update-user/update-user';
 
 export const mockAddUser = (): AddUser => {
@@ -41,4 +43,17 @@ export const mockUpdateUser = (): UpdateUser => {
     }
   }
   return new UpdateUserStub();
+};
+export const mockUpdatePassword = (): UpdatePassword => {
+  class UpdatePasswordStub implements UpdatePassword {
+    userModel = mockFakeUserPassword('client');
+    async updatePassword(
+      newPassword: string,
+      oldPassword: string,
+      userId: string,
+    ): Promise<Omit<UserModel, 'password'>> {
+      return new Promise((resolve) => resolve(this.userModel));
+    }
+  }
+  return new UpdatePasswordStub();
 };
