@@ -4,9 +4,23 @@ import { app } from '@/bin/configuration/app';
 import { Collection } from 'mongodb';
 import { addDay } from '@/bin/utils/date-fns';
 import { hash } from 'bcrypt';
+import variables from '@/bin/configuration/variables';
+import { sign } from 'jsonwebtoken';
 
 let userCollection: Collection;
-
+const makeAccessToken = async (
+  role: string,
+  password: string,
+): Promise<string> => {
+  const res = await userCollection.insertOne({
+    name: 'tedsste',
+    email: 'testando@gmail.com',
+    password,
+    role,
+  });
+  const _id = res.ops[0]._id;
+  return sign({ _id }, variables.Security.secretKey);
+};
 describe('USER ROUTER', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL);
@@ -63,6 +77,41 @@ describe('USER ROUTER', () => {
           password: '111123',
         })
         .expect(401);
+    });
+  });
+  describe('PUT /user/completeRegister', () => {
+    test('Should return 200 an update on my user', async () => {
+      const password = await hash('111123', 12);
+      const accessToken = await makeAccessToken('client', password);
+      await request(app)
+        .put('/api/user/completeRegister')
+        .send({
+          cpf: 'any_cpf',
+          phone: 'any_phone',
+        })
+        .set('authorization', 'Bearer ' + accessToken);
+      expect(200);
+    });
+    test('Should return 401 an token without role client on users', async () => {
+      const password = await hash('111123', 12);
+      const accessToken = await makeAccessToken('any_role', password);
+      await request(app)
+        .put('/api/user/completeRegister')
+        .send({
+          cpf: 'any_cpf',
+          phone: 'any_phone',
+        })
+        .set('authorization', 'Bearer ' + accessToken);
+      expect(401);
+    });
+    test('Should return 403 on users without token', async () => {
+      await request(app)
+        .put('/api/user/completeRegister')
+        .send({
+          cpf: 'any_cpf',
+          phone: 'any_phone',
+        })
+        .expect(403);
     });
   });
 });
