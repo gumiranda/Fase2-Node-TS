@@ -114,4 +114,51 @@ describe('USER ROUTER', () => {
         .expect(403);
     });
   });
+  describe('PUT /user/updatePassword', () => {
+    test('Should return 200 an update on my user', async () => {
+      const password = await hash('111123', 12);
+      const accessToken = await makeAccessToken('client', password);
+      await request(app)
+        .put('/api/user/updatePassword')
+        .send({
+          oldPassword: '111123',
+          newPassword: 'any_password',
+        })
+        .set('authorization', 'Bearer ' + accessToken);
+      expect(200);
+    });
+    test('Should return 401 an token without role client on users', async () => {
+      const password = await hash('111123', 12);
+      const accessToken = await makeAccessToken('client', password);
+      await userCollection.insertMany([
+        {
+          name: 'tedsste',
+          email: 'testando@gmail.com',
+          password,
+        },
+        {
+          name: 'tedsste',
+          email: 'testando@gmail.com',
+          password,
+        },
+      ]);
+      await request(app)
+        .put('/api/user/updatePassword')
+        .send({
+          oldPassword: '111123',
+          newPassword: 'any_password',
+        })
+        .set('authorization', 'Bearer ' + accessToken);
+      expect(401);
+    });
+    test('Should return 403 on users without token', async () => {
+      await request(app)
+        .put('/api/user/updatePassword')
+        .send({
+          oldPassword: '111123',
+          newPassword: 'any_password',
+        })
+        .expect(403);
+    });
+  });
 });
