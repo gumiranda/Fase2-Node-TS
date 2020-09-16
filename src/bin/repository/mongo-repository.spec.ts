@@ -1,6 +1,5 @@
 import { MongoHelper } from '@/bin/helpers/db/mongo/mongo-helper';
 import { Collection } from 'mongodb';
-import { mockFakeUserData } from '@/modules/user/models/mocks/mock-user';
 import { MongoRepository } from '@/bin/repository/mongo-repository';
 import MockDate from 'mockdate';
 let userCollection: Collection;
@@ -26,7 +25,15 @@ describe('Mongo Repository', () => {
   };
   test('Should return an user add success', async () => {
     const sut = makeSut();
-    const user = await sut.add(mockFakeUserData('client'));
+    const user = await sut.add({
+      name: 'valid_name',
+      email: 'valid_email@mail.com',
+      password: 'valid_password',
+      role: 'client',
+      createdAt: new Date(),
+      coord: [43.6589, -67.0087548],
+      payDay: new Date(),
+    });
     expect(user).toBeTruthy();
     expect(user._id).toBeTruthy();
     expect(user.name).toBe('valid_name');
