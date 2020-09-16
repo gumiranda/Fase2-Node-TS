@@ -6,6 +6,7 @@ import { MongoRepository } from '@/bin/repository/mongo-repository';
 import MockDate from 'mockdate';
 import variables from '@/bin/configuration/variables';
 import jwt from 'jsonwebtoken';
+import { UserModel } from '../models/user-model';
 
 let userCollection: Collection;
 
@@ -24,7 +25,12 @@ describe('User Mongo Repository', () => {
     userCollection = await MongoHelper.getCollection('users');
     await userCollection.deleteMany({});
   });
-
+  const makeUser = async (): Promise<UserModel> => {
+    let user = mockFakeUserData('client');
+    user.coord = { type: 'Point', coordinates: user.coord };
+    const { ops } = await userCollection.insertOne(user);
+    return ops[0];
+  };
   const makeSut = (): UserMongoRepository => {
     const mongoRepository = new MongoRepository('users');
     return new UserMongoRepository(mongoRepository);
@@ -86,5 +92,21 @@ describe('User Mongo Repository', () => {
     );
     const user = await sut.loadByToken(token, 'client');
     expect(user).toBeFalsy();
+  });
+
+  test('Should return an user updated success', async () => {
+    const user = await makeUser();
+    const sut = makeSut();
+    const userUpdated = await sut.updateOne(
+      {
+        cpf: 'any_cpf',
+        phone: 'any_phone',
+      },
+      user._id,
+    );
+    expect(userUpdated).toBeTruthy();
+    expect(userUpdated._id).toBeTruthy();
+    expect(userUpdated.cpf).toBe('any_cpf');
+    expect(userUpdated.phone).toBe('any_phone');
   });
 });
