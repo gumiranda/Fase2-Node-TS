@@ -17,15 +17,11 @@ export class MongoRepository {
   }
   async findOneAndUpdate(query, data, options): Promise<any> {
     const collection = await this.getCollection();
-    return await collection.findOneAndUpdate(query, data, options);
-  }
-  async update(query, data, options): Promise<any> {
-    const collection = await this.getCollection();
-    return await collection.update(query, data, options);
+    return collection.findOneAndUpdate(query, data, options);
   }
   async updateOne(query, data, options): Promise<any> {
     const collection = await this.getCollection();
-    return await collection.updateOne(query, data, options);
+    return collection.updateOne(query, data, options);
   }
   async getOne(query) {
     const collection = await this.getCollection();
