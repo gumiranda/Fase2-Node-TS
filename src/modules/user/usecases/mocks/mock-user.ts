@@ -1,6 +1,7 @@
 import { mockFakeUser } from '../../models/mocks/mock-user';
 import { UserModel } from '../../models/user-model';
 import { AddUser, AddUserModel } from '../add-user/add-user';
+import { LoadUserByToken } from '../load-user-by-token/load-user-by-token';
 
 export const mockAddUser = (): AddUser => {
   class AddUserStub implements AddUser {
@@ -11,4 +12,17 @@ export const mockAddUser = (): AddUser => {
     }
   }
   return new AddUserStub();
+};
+export const mockLoadUserByToken = (): LoadUserByToken => {
+  class LoadUserByTokenStub implements LoadUserByToken {
+    userModel = mockFakeUser('client');
+    accessToken: string;
+    role: string;
+    async load(accessToken: string, role?: string): Promise<UserModel> {
+      this.accessToken = accessToken;
+      this.role = role;
+      return new Promise((resolve) => resolve(this.userModel));
+    }
+  }
+  return new LoadUserByTokenStub();
 };
