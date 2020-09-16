@@ -3,6 +3,7 @@ import { AddUserRepository } from '@/modules/user/repositories/protocols/add-use
 import { AddUserModel } from '@/modules/user/usecases/add-user/add-user';
 import { UserModel } from '@/modules/user/models/user-model';
 import { LoadUserByEmailRepository } from '@/modules/user/repositories/protocols/load-user-by-email-repository';
+import { LoadUserByTokenRepository } from '../protocols/load-user-by-token-repository';
 
 export const mockAddUserRepository = (): AddUserRepository => {
   //  userModel = mockFakeUser('client');
@@ -33,4 +34,17 @@ export const mockLoadUserByEmailRepositoryNotNull = (): LoadUserByEmailRepositor
     }
   }
   return new LoadUserByEmailRepositoryStub();
+};
+export const mockLoadUserByTokenRepository = (): LoadUserByTokenRepository => {
+  class LoadUserByTokenRepositoryStub implements LoadUserByTokenRepository {
+    role: string;
+    token: string;
+    userModel = mockFakeUser('client');
+    async loadByToken(token: string, role?: string): Promise<UserModel> {
+      this.token = token;
+      this.role = role;
+      return new Promise((resolve) => resolve(this.userModel));
+    }
+  }
+  return new LoadUserByTokenRepositoryStub();
 };
