@@ -161,4 +161,49 @@ describe('USER ROUTER', () => {
         .expect(403);
     });
   });
+  describe('GET /user/page/:page', () => {
+    test('Should return 200 an token on users', async () => {
+      const password = await hash('111123', 12);
+      const accessToken = await makeAccessToken('client', password);
+      await userCollection.insertMany([
+        {
+          name: 'tedsste',
+          email: 'testando@gmail.com',
+          password,
+        },
+        {
+          name: 'tedsste',
+          email: 'testando@gmail.com',
+          password,
+        },
+      ]);
+      await request(app)
+        .get('/api/user/page/1')
+        .set('authorization', 'Bearer ' + accessToken);
+      expect(200);
+    });
+    test('Should return 401 an token without role client on users', async () => {
+      const password = await hash('111123', 12);
+      const accessToken = await makeAccessToken('client', password);
+      await userCollection.insertMany([
+        {
+          name: 'tedsste',
+          email: 'testando@gmail.com',
+          password,
+        },
+        {
+          name: 'tedsste',
+          email: 'testando@gmail.com',
+          password,
+        },
+      ]);
+      await request(app)
+        .get('/api/user/page/1')
+        .set('authorization', 'Bearer ' + accessToken);
+      expect(401);
+    });
+    test('Should return 403 on users without token', async () => {
+      await request(app).get('/api/user/page/1').expect(403);
+    });
+  });
 });

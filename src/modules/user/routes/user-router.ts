@@ -5,6 +5,7 @@ import { makeSignUpController } from '../factories/controllers/signup-factory-co
 import { auth } from '@/bin/middlewares/auth';
 import { makeCompleteRegisterController } from '../factories/controllers/update-user-factory-controller';
 import { makeUpdatePasswordController } from '../factories/controllers/update-password-factory-controller';
+import { makeLoadUserByPageController } from '../factories/controllers/load-user-by-page-factory-controller';
 
 const router = Router();
 router.post('/register', adaptRoute(makeSignUpController()));
@@ -15,5 +16,6 @@ router.put(
   adaptRoute(makeCompleteRegisterController()),
 );
 router.put('/updatePassword', auth, adaptRoute(makeUpdatePasswordController()));
+router.get('/page/:page', auth, adaptRoute(makeLoadUserByPageController()));
 
 export default router;
