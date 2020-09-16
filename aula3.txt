@@ -1,0 +1,13 @@
+LOGS
+1 - LOGMONGOREPOSITORY 
+
+
+USER REGISTER
+1 - criar rota de cadastro em user router
+2 - criar bin/configuration/adapters/express-route-adapter.ts
+3 - criar bin/protocols
+4 - criar bin/protocols/http.ts e controller.ts
+6 - criar modules/user/factories/controllers/signup-factory-controller
+7 - criar '@/modules/user/controllers/signup/signup-controller';
+8 - criar '@/modules/user/factories/usecases/add-user/db-add-user-factory';
+9 - criar '@/bin/patterns/factories/usecases/validation/validation-factory';
