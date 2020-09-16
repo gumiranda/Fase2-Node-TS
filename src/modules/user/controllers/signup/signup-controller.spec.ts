@@ -15,7 +15,6 @@ import {
   mockFakeUserData,
 } from '@/modules/user/models/mocks/mock-user';
 import MockDate from 'mockdate';
-import { addDay } from '@/bin/utils/date-fns';
 import { SignUpController } from './signup-controller';
 const makeFakeRequest = (): HttpRequest => ({
   body: mockFakeUserData('client'),

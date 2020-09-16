@@ -10,6 +10,8 @@ import {
 import { Validation } from '@/bin/helpers/validators/validation';
 import { EmailInUseError } from '@/bin/errors';
 import { addDay } from '@/bin/utils/date-fns';
+import OneSignal from '@/bin/helpers/onesignal';
+
 export class SignUpController implements Controller {
   private readonly addUser: AddUser;
   private readonly validation: Validation;
@@ -28,7 +30,16 @@ export class SignUpController implements Controller {
       if (!httpRequest.body.role || httpRequest.body?.role === 'admin') {
         httpRequest.body.role = 'client';
       }
-      const { name, email, password, role, coord, plan } = httpRequest.body;
+      const {
+        name,
+        email,
+        password,
+        role,
+        pushToken,
+        pushId,
+        coord,
+        plan,
+      } = httpRequest.body;
       let position = coord;
       const payDay = addDay(new Date(), 7);
       let obj: any = {
@@ -36,6 +47,7 @@ export class SignUpController implements Controller {
         email,
         password,
         role,
+        pushId,
         coord: { type: 'Point', coordinates: position },
         payDay,
         createdAt: new Date(),
@@ -48,6 +60,9 @@ export class SignUpController implements Controller {
       const user = await this.addUser.add(obj);
       if (!user) {
         return forbidden(new EmailInUseError());
+      }
+      if (pushToken) {
+        await OneSignal.addDevice(pushToken);
       }
       return ok(user);
     } catch (error) {
