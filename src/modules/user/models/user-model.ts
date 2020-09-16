@@ -60,7 +60,22 @@ export type Follower = {
 };
 export type UserData = Omit<
   UserModel,
-  'plan followers following numDislikes numLikes numFollowing numFollowers ownerId role email _id active password payDay email createdAt emailConfirmation'
+  | 'plan'
+  | 'followers'
+  | 'following'
+  | 'numDislikes'
+  | 'numLikes'
+  | 'numFollowing'
+  | 'numFollowers'
+  | 'ownerId'
+  | 'role'
+  | 'email'
+  | '_id'
+  | 'active'
+  | 'password'
+  | 'payDay'
+  | 'createdAt'
+  | 'emailConfirmation'
 >;
 export type Days = {
   monday: boolean;
