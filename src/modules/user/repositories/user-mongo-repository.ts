@@ -9,13 +9,18 @@ import jwt from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
 import { LoadUserByTokenRepository } from './protocols/load-user-by-token-repository';
 import { UpdateUserRepository } from './protocols/update-user-repository';
+import { UpdatePasswordRepository } from './protocols/update-password-repository';
+import { LoadUserByIdRepository } from './protocols/load-user-by-id-repository';
 export class UserMongoRepository
   implements
     AddUserRepository,
     UpdateUserRepository,
     LoadUserByEmailRepository,
-    LoadUserByTokenRepository {
+    LoadUserByTokenRepository,
+    UpdatePasswordRepository,
+    LoadUserByIdRepository {
   constructor(private readonly mongoRepository: MongoRepository) {}
+  _id: string;
   userModel: UserModel;
   role: string;
   token: string;
@@ -54,5 +59,26 @@ export class UserMongoRepository
     );
     const result = await this.mongoRepository.getOne({ _id: userId });
     return result && MongoHelper.mapPassword(result);
+  }
+  async updatePassword(
+    newPassword: string,
+    userId: string,
+  ): Promise<Omit<UserModel, 'password'>> {
+    const userUpdated = await this.mongoRepository.findOneAndUpdate(
+      {
+        _id: new ObjectId(userId),
+      },
+      {
+        $set: {
+          password: newPassword,
+        },
+      },
+      { upsert: true },
+    );
+    return userUpdated.value;
+  }
+  async loadById(_id: string): Promise<UserModel> {
+    const result = await this.mongoRepository.getById(_id);
+    return result;
   }
 }

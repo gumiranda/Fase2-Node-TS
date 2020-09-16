@@ -109,4 +109,19 @@ describe('User Mongo Repository', () => {
     expect(userUpdated.cpf).toBe('any_cpf');
     expect(userUpdated.phone).toBe('any_phone');
   });
+  test('Should return an user updated password success', async () => {
+    const user = await makeUser();
+    const sut = makeSut();
+    const userUpdated = await sut.updatePassword('new_password', user._id);
+    expect(userUpdated).toBeTruthy();
+    expect(userUpdated._id).toBeTruthy();
+  });
+  test('Should return an user loaded by id with success', async () => {
+    const user = await makeUser();
+    const sut = makeSut();
+    const userLoaded = await sut.loadById(user._id);
+    expect(userLoaded).toBeTruthy();
+    expect(userLoaded._id).toBeTruthy();
+    expect(userLoaded._id).toEqual(user._id);
+  });
 });

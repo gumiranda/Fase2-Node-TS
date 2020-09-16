@@ -8,6 +8,8 @@ import { UserData, UserModel } from '@/modules/user/models/user-model';
 import { LoadUserByEmailRepository } from '@/modules/user/repositories/protocols/load-user-by-email-repository';
 import { LoadUserByTokenRepository } from '../protocols/load-user-by-token-repository';
 import { UpdateUserRepository } from '../protocols/update-user-repository';
+import { UpdatePasswordRepository } from '../protocols/update-password-repository';
+import { LoadUserByIdRepository } from '../protocols/load-user-by-id-repository';
 
 export const mockAddUserRepository = (): AddUserRepository => {
   //  userModel = mockFakeUser('client');
@@ -63,4 +65,31 @@ export const mockUpdateUserRepository = (): UpdateUserRepository => {
     userModel = mockFakeUserUpdated('client');
   }
   return new UpdateUserRepositoryStub();
+};
+export const mockUpdatePasswordRepository = (): UpdatePasswordRepository => {
+  //  userModel = mockFakeUser('client');
+  class UpdatePasswordRepositoryStub implements UpdatePasswordRepository {
+    async updatePassword(
+      newPassword: string,
+      userId: string,
+    ): Promise<Omit<UserModel, 'password'>> {
+      return new Promise((resolve) => resolve(this.userModel));
+    }
+    userModel = mockFakeUserUpdated('client');
+  }
+  return new UpdatePasswordRepositoryStub();
+};
+export const mockLoadUserByIdRepository = (): LoadUserByIdRepository => {
+  class LoadUserByIdStub implements LoadUserByIdRepository {
+    userModel = mockFakeUser('client');
+    _id: string;
+    async loadById(_id: string): Promise<UserModel> {
+      this._id = _id;
+      if (this.userModel !== null) {
+        this.userModel._id = _id;
+      }
+      return new Promise((resolve) => resolve(this.userModel));
+    }
+  }
+  return new LoadUserByIdStub();
 };
