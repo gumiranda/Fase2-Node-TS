@@ -3,6 +3,7 @@ import { Router } from 'express';
 import { makeLoginController } from '../factories/controllers/login-factory-controller';
 import { makeSignUpController } from '../factories/controllers/signup-factory-controller';
 import { auth } from '@/bin/middlewares/auth';
+import { makeCompleteRegisterController } from '../factories/controllers/update-user-factory-controller';
 
 const router = Router();
 router.post('/register', adaptRoute(makeSignUpController()));
