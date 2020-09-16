@@ -3,6 +3,8 @@ import { MongoHelper } from '@/bin/helpers/db/mongo/mongo-helper';
 import { app } from '@/bin/configuration/app';
 import { Collection } from 'mongodb';
 import { addDay } from '@/bin/utils/date-fns';
+import { hash } from 'bcrypt';
+
 let userCollection: Collection;
 
 describe('USER ROUTER', () => {
@@ -34,6 +36,33 @@ describe('USER ROUTER', () => {
           payDay: addDay(new Date(), 7),
         })
         .expect(200);
+    });
+  });
+
+  describe('POST /user/authenticate', () => {
+    test('Should return 200 an token on login', async () => {
+      const password = await hash('111123', 12);
+      await userCollection.insertOne({
+        name: 'tedsste',
+        email: 'testando@gmail.com',
+        password,
+      });
+      await request(app)
+        .post('/api/user/authenticate')
+        .send({
+          email: 'testando@gmail.com',
+          password: '111123',
+        })
+        .expect(200);
+    });
+    test('Should return 401 on login', async () => {
+      await request(app)
+        .post('/api/user/authenticate')
+        .send({
+          email: 'testando@gmail.com',
+          password: '111123',
+        })
+        .expect(401);
     });
   });
 });
