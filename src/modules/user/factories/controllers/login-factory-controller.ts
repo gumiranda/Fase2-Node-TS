@@ -2,7 +2,7 @@ import { Controller } from '@/bin/protocols/controller';
 import { LoginController } from '@/modules/user/controllers/login/login-controller';
 import { makeDbAuthentication } from '@/bin/patterns/factories/usecases/authentication/db-authentication-factory';
 import { makeValidationComposite } from '@/bin/patterns/factories/usecases/validation/validation-factory';
-import { makeLogControllerDecorator } from '@/bin/patterns/factories/decorators/log-controller-decorator';
+import { makeLogControllerDecorator } from '@/bin/patterns/factories/decorators/log-controller-decorator-factory';
 
 export const makeLoginController = (): Controller => {
   const authentication = makeDbAuthentication();
