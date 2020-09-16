@@ -1,10 +1,12 @@
 import {
+  makeFakeArrayUsers,
   mockFakeUser,
   mockFakeUserPassword,
   mockFakeUserUpdated,
 } from '../../models/mocks/mock-user';
-import { UserData, UserModel } from '../../models/user-model';
+import { UserData, UserModel, UsersPaginate } from '../../models/user-model';
 import { AddUser, AddUserModel } from '../add-user/add-user';
+import { LoadUserByPage } from '../load-user-by-page/load-user-by-page';
 import { LoadUserByToken } from '../load-user-by-token/load-user-by-token';
 import { UpdatePassword } from '../update-password/update-password';
 import { UpdateUser } from '../update-user/update-user';
@@ -56,4 +58,22 @@ export const mockUpdatePassword = (): UpdatePassword => {
     }
   }
   return new UpdatePasswordStub();
+};
+export const mockLoadUserByPage = (): LoadUserByPage => {
+  class LoadUserByPageStub implements LoadUserByPage {
+    users = makeFakeArrayUsers();
+    page: number;
+    userId: string;
+    loadByPage(page: number, userId: string): Promise<UsersPaginate> {
+      this.page = page;
+      this.userId = userId;
+      return new Promise((resolve) =>
+        resolve({
+          users: this.users.slice(0, 10),
+          usersCount: this.users.length,
+        }),
+      );
+    }
+  }
+  return new LoadUserByPageStub();
 };
