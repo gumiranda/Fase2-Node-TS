@@ -10,6 +10,8 @@ export const mockFakeUserData = (role: string): AddUserModel => ({
   email: 'valid_email@mail.com',
   password: 'valid_password',
   role,
+  face: false,
+  active: true,
   createdAt: new Date(),
   coord: [43.6589, -67.0087548],
   payDay: addDay(new Date(), 7),
@@ -17,6 +19,8 @@ export const mockFakeUserData = (role: string): AddUserModel => ({
 export const mockFakeUser = (role: string): UserModel => ({
   _id: 'valid_id',
   name: 'valid_name',
+  face: false,
+  active: true,
   coord: {
     type: 'Point',
     coordinates: [43.6589, -67.0087548],
@@ -35,6 +39,8 @@ export const mockFakeUserPassword = (
   name: 'valid_name',
   email: 'valid_email@mail.com',
   role,
+  face: false,
+  active: true,
   createdAt: new Date(),
   coord: {
     type: 'Point',
@@ -49,6 +55,8 @@ export const mockFakeUserUpdated = (
   name: 'valid_name',
   email: 'valid_email@mail.com',
   role,
+  face: false,
+  active: true,
   cpf: 'any_cpf',
   phone: 'any_phone',
   createdAt: new Date(),
@@ -65,6 +73,8 @@ export const mockFakeUserPasswordUpdated = (
   name: 'valid_name',
   email: 'valid_email@mail.com',
   role,
+  face: false,
+  active: true,
   createdAt: new Date(),
   coord: {
     type: 'Point',
@@ -121,6 +131,8 @@ export const mockFakeUserWithPasswordHashed = (
   name: 'valid_name',
   email: 'valid_email@mail.com',
   password,
+  face: false,
+  active: true,
   createdAt: new Date(),
   role: 'client',
   payDay: addDay(new Date(), 7),

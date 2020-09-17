@@ -38,7 +38,6 @@ export class SignUpController implements Controller {
         pushToken,
         pushId,
         coord,
-        plan,
       } = httpRequest.body;
       let position = coord;
       const payDay = addDay(new Date(), 7);
@@ -47,7 +46,6 @@ export class SignUpController implements Controller {
         email,
         password,
         role,
-        pushId,
         coord: { type: 'Point', coordinates: position },
         payDay,
         face: false,
@@ -55,6 +53,9 @@ export class SignUpController implements Controller {
         plan: 'basic',
         createdAt: new Date(),
       };
+      if (pushId) {
+        obj.pushId = pushId;
+      }
       const user = await this.addUser.add(obj);
       if (!user) {
         return forbidden(new EmailInUseError());
