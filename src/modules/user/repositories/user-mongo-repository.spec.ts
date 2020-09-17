@@ -12,7 +12,16 @@ import jwt from 'jsonwebtoken';
 import { UserModel } from '../models/user-model';
 
 let userCollection: Collection;
-
+const makeUser = async (): Promise<UserModel> => {
+  let user = mockFakeUserData('client');
+  user.coord = { type: 'Point', coordinates: user.coord };
+  const { ops } = await userCollection.insertOne(user);
+  return ops[0];
+};
+const makeSut = (): UserMongoRepository => {
+  const mongoRepository = new MongoRepository('users');
+  return new UserMongoRepository(mongoRepository);
+};
 describe('User Mongo Repository', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL);
@@ -28,16 +37,7 @@ describe('User Mongo Repository', () => {
     userCollection = await MongoHelper.getCollection('users');
     await userCollection.deleteMany({});
   });
-  const makeUser = async (): Promise<UserModel> => {
-    let user = mockFakeUserData('client');
-    user.coord = { type: 'Point', coordinates: user.coord };
-    const { ops } = await userCollection.insertOne(user);
-    return ops[0];
-  };
-  const makeSut = (): UserMongoRepository => {
-    const mongoRepository = new MongoRepository('users');
-    return new UserMongoRepository(mongoRepository);
-  };
+
   test('Should return an user add success', async () => {
     const sut = makeSut();
     const user = await sut.add(mockFakeUserData('client'));

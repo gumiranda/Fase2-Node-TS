@@ -51,13 +51,10 @@ export class SignUpController implements Controller {
         coord: { type: 'Point', coordinates: position },
         payDay,
         face: false,
+        active: true,
+        plan: 'basic',
         createdAt: new Date(),
       };
-      if (plan) {
-        obj.plan = plan;
-      } else {
-        obj.plan = 'basic';
-      }
       const user = await this.addUser.add(obj);
       if (!user) {
         return forbidden(new EmailInUseError());
