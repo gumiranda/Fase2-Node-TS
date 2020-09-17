@@ -13,6 +13,8 @@ import { UpdatePasswordRepository } from './protocols/update-password-repository
 import { LoadUserByIdRepository } from './protocols/load-user-by-id-repository';
 import { LoadUserByPageRepository } from './protocols/load-user-by-page-repository';
 import { QueryBuilder } from '@/bin/helpers/query-builder';
+import { LoadUserByFaceTokenRepository } from './protocols/load-user-by-face-token-repository';
+import { loginFB } from '@/bin/helpers/facebook';
 export class UserMongoRepository
   implements
     AddUserRepository,
@@ -21,8 +23,11 @@ export class UserMongoRepository
     LoadUserByTokenRepository,
     UpdatePasswordRepository,
     LoadUserByIdRepository,
+    LoadUserByFaceTokenRepository,
     LoadUserByPageRepository {
   constructor(private readonly mongoRepository: MongoRepository) {}
+  faceId: string;
+  faceToken: string;
   _id: string;
   userModel: UserModel;
   role: string;
@@ -122,5 +127,24 @@ export class UserMongoRepository
       .build();
     const users = await this.mongoRepository.aggregate(query);
     return users;
+  }
+  async loadByFaceToken(faceId: string, faceToken: string): Promise<UserModel> {
+    const response: any = await loginFB(faceId, faceToken);
+    if (response?.data?.id) {
+      const result = await this.mongoRepository.getOne({ faceId, face: true });
+      if (result) {
+        return result;
+      }
+      let userData: any = { faceId, face: true };
+      if (response?.data?.name) {
+        userData.name = response.data.name;
+        userData.payDay = new Date();
+        userData.createdAt = new Date();
+        userData.role = 'client';
+        userData.photo_url = response.data.picture.data.url;
+      }
+      const resultAdd = await this.mongoRepository.add(userData);
+      return resultAdd;
+    }
   }
 }

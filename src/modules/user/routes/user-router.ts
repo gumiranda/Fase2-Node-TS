@@ -6,10 +6,12 @@ import { auth } from '@/bin/middlewares/auth';
 import { makeCompleteRegisterController } from '../factories/controllers/update-user-factory-controller';
 import { makeUpdatePasswordController } from '../factories/controllers/update-password-factory-controller';
 import { makeLoadUserByPageController } from '../factories/controllers/load-user-by-page-factory-controller';
+import { makeLoginFacebookController } from '../factories/controllers/login-facebook-factory-controller';
 
 const router = Router();
 router.post('/register', adaptRoute(makeSignUpController()));
 router.post('/authenticate', adaptRoute(makeLoginController()));
+router.post('/authenticateFacebook', adaptRoute(makeLoginFacebookController()));
 router.put(
   '/completeRegister',
   auth,

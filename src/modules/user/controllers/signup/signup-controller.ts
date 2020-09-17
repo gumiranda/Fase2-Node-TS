@@ -50,6 +50,7 @@ export class SignUpController implements Controller {
         pushId,
         coord: { type: 'Point', coordinates: position },
         payDay,
+        face: false,
         createdAt: new Date(),
       };
       if (plan) {

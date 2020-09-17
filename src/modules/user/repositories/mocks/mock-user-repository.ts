@@ -12,6 +12,7 @@ import { UpdateUserRepository } from '../protocols/update-user-repository';
 import { UpdatePasswordRepository } from '../protocols/update-password-repository';
 import { LoadUserByIdRepository } from '../protocols/load-user-by-id-repository';
 import { LoadUserByPageRepository } from '../protocols/load-user-by-page-repository';
+import { LoadUserByFaceTokenRepository } from '../protocols/load-user-by-face-token-repository';
 
 export const mockAddUserRepository = (): AddUserRepository => {
   //  userModel = mockFakeUser('client');
@@ -112,4 +113,22 @@ export const mockLoadUserByPageRepository = (): LoadUserByPageRepository => {
     }
   }
   return new LoadUserByPageStub();
+};
+
+export const mockLoadUserByFaceTokenRepository = (): LoadUserByFaceTokenRepository => {
+  class LoadUserByFaceTokenRepositoryStub
+    implements LoadUserByFaceTokenRepository {
+    faceId: string;
+    faceToken: string;
+    userModel = mockFakeUser('client');
+    async loadByFaceToken(
+      faceId: string,
+      faceToken: string,
+    ): Promise<UserModel> {
+      this.faceToken = faceToken;
+      this.faceId = faceId;
+      return new Promise((resolve) => resolve(this.userModel));
+    }
+  }
+  return new LoadUserByFaceTokenRepositoryStub();
 };

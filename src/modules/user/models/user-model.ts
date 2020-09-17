@@ -5,7 +5,9 @@ export type UserModel = {
   password: string;
   payDay: string;
   role?: string;
+  faceId?: string;
   pushId?: string;
+  photo_url?: string;
   cpf?: string;
   phone?: string;
   coord?: any;
@@ -76,6 +78,7 @@ export type UserData = Omit<
   | 'payDay'
   | 'createdAt'
   | 'emailConfirmation'
+  | 'faceId'
 >;
 export type Days = {
   monday: boolean;
